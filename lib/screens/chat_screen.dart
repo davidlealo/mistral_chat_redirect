@@ -21,57 +21,51 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (userMessage.isEmpty) return;
 
+    // Añadir el mensaje del usuario al chat
     setState(() {
       messages.add({"role": "user", "content": userMessage});
       controller.clear();
     });
 
     try {
+      // Llamar a la API
       final String response = await apiService.sendMessage(userMessage);
-      final String option = _determineOption(response);
 
-      if (option == "ADMINISTRADOR INTELIGENTE DE COLEGIOS") {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const AdminScreen()));
-      } else if (option == "DESARROLLO PROYECTOS ABP") {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ProyectosABPScreen()));
-      } else if (option == "EVENTO ABP") {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const EventoABPScreen()));
-      } else {
-        setState(() {
-          messages.add({
-            "role": "bot",
-            "content": "No se identificó una opción válida en la respuesta."
+      // Redirigir a la pantalla correspondiente según la respuesta exacta
+      switch (response.trim()) {
+        case "ADMINISTRADOR INTELIGENTE DE COLEGIOS":
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AdminScreen()));
+          break;
+
+        case "DESARROLLO PROYECTOS ABP":
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const ProyectosABPScreen()));
+          break;
+
+        case "EVENTO ABP":
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const EventoABPScreen()));
+          break;
+
+        default:
+          // Mensaje si no se reconoce ninguna opción
+          setState(() {
+            messages.add({
+              "role": "bot",
+              "content":
+                  "No se identificó una opción válida en la respuesta: $response"
+            });
           });
-        });
       }
     } catch (e) {
+      // Manejar errores de la API
       setState(() {
         messages.add({
           "role": "bot",
           "content": "Error al comunicarse con la API: ${e.toString()}"
         });
       });
-    }
-  }
-
-  // Método para determinar la opción basada en palabras clave
-  String _determineOption(String responseText) {
-    final String lowerResponse = responseText.toLowerCase();
-
-    if (lowerResponse.contains("administrador") &&
-        lowerResponse.contains("colegios")) {
-      return "ADMINISTRADOR INTELIGENTE DE COLEGIOS";
-    } else if (lowerResponse.contains("proyectos abp") ||
-        lowerResponse.contains("desarrollo abp")) {
-      return "DESARROLLO PROYECTOS ABP";
-    } else if (lowerResponse.contains("evento abp") ||
-        lowerResponse.contains("evento")) {
-      return "EVENTO ABP";
-    } else {
-      return "OPCIÓN DESCONOCIDA";
     }
   }
 

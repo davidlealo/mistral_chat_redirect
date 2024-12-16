@@ -15,11 +15,20 @@ class ApiService {
     };
 
     final body = jsonEncode({
-      "model": "mistral-large-latest",
-      "messages": [
-        {"role": "user", "content": message}
-      ]
-    });
+  "model": "mistral-large-latest",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Elige una de las siguientes opciones según mi mensaje: \n"
+          "1. ADMINISTRADOR INTELIGENTE DE COLEGIOS\n"
+          "2. DESARROLLO PROYECTOS ABP\n"
+          "3. EVENTO ABP\n\n"
+          "Responde únicamente con la opción más adecuada: 'ADMINISTRADOR INTELIGENTE DE COLEGIOS', "
+          "'DESARROLLO PROYECTOS ABP' o 'EVENTO ABP'.\n"
+          "Mi mensaje: \"$message\""
+    }
+  ]
+});
 
     debugPrint('Headers: $headers');
     debugPrint('Body: $body');
