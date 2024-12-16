@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../constants.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
   Future<String> sendMessage(String message) async {
+    final String apiKey = dotenv.env['MISTRAL_API_KEY'] ?? ''; // Carga la clave API directamente
+    const String apiUrl = 'https://api.mistral.ai/v1/chat/completions';
+
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $apiKey',
@@ -15,7 +18,6 @@ class ApiService {
       ]
     });
 
-    // Depuración: Imprime los valores antes de enviar la solicitud
     print('Headers: $headers');
     print('Body: $body');
 
@@ -26,12 +28,10 @@ class ApiService {
         final data = jsonDecode(response.body);
         return data['choices'][0]['message']['content'];
       } else {
-        // Depuración: Imprime la respuesta de error
         print('Error Response (${response.statusCode}): ${response.body}');
         throw Exception('Error al comunicarse con la API: ${response.statusCode}');
       }
     } catch (e) {
-      // Depuración: Muestra cualquier otro error
       print('Error: $e');
       rethrow;
     }
