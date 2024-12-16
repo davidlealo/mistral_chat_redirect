@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Necesario para operaciones asíncronas
+  await dotenv.load(fileName: "assets/.env"); // Cargar el archivo .env
   runApp(const MyApp());
 }
 
