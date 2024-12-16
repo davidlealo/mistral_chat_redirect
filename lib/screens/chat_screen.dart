@@ -17,57 +17,48 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, String>> messages = [];
 
   void sendMessage() async {
-    final userMessage = controller.text;
+  final userMessage = controller.text;
 
-    if (userMessage.isEmpty) return;
+  if (userMessage.isEmpty) return;
 
-    // Añadir el mensaje del usuario al chat
-    setState(() {
-      messages.add({"role": "user", "content": userMessage});
-      controller.clear();
-    });
+  setState(() {
+    messages.add({"role": "user", "content": userMessage});
+    controller.clear();
+  });
 
-    try {
-      // Llamar a la API
-      final String response = await apiService.sendMessage(userMessage);
+  try {
+    final String response = await apiService.sendMessage(userMessage);
 
-      // Redirigir a la pantalla correspondiente según la respuesta exacta
-      switch (response.trim()) {
-        case "ADMINISTRADOR INTELIGENTE DE COLEGIOS":
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AdminScreen()));
-          break;
+    // Normaliza la respuesta
+    final String normalizedResponse = response.trim().toUpperCase();
 
-        case "DESARROLLO PROYECTOS ABP":
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const ProyectosABPScreen()));
-          break;
-
-        case "EVENTO ABP":
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const EventoABPScreen()));
-          break;
-
-        default:
-          // Mensaje si no se reconoce ninguna opción
-          setState(() {
-            messages.add({
-              "role": "bot",
-              "content":
-                  "No se identificó una opción válida en la respuesta: $response"
-            });
-          });
-      }
-    } catch (e) {
-      // Manejar errores de la API
+    if (normalizedResponse == "ADMINISTRADOR INTELIGENTE DE COLEGIOS") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const AdminScreen()));
+    } else if (normalizedResponse == "DESARROLLO PROYECTOS ABP") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const ProyectosABPScreen()));
+    } else if (normalizedResponse == "EVENTO ABP") {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const EventoABPScreen()));
+    } else {
       setState(() {
         messages.add({
           "role": "bot",
-          "content": "Error al comunicarse con la API: ${e.toString()}"
+          "content": response // Muestra el mensaje amigable del asistente
         });
       });
     }
+  } catch (e) {
+    setState(() {
+      messages.add({
+        "role": "bot",
+        "content": "Error al comunicarse con la API: ${e.toString()}"
+      });
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +73,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 final message = messages[index];
                 final isUser = message['role'] == "user";
                 return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.all(8),
                     padding: const EdgeInsets.all(12),

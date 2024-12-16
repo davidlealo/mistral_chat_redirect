@@ -18,17 +18,24 @@ class ApiService {
   "model": "mistral-large-latest",
   "messages": [
     {
-      "role": "user",
-      "content": "Elige una de las siguientes opciones según mi mensaje: \n"
+      "role": "system",
+      "content": "Eres un asistente de navegación para la aplicación de Innovacien. "
+          "Tu tarea es ayudar al usuario a elegir una de las siguientes opciones:\n\n"
           "1. ADMINISTRADOR INTELIGENTE DE COLEGIOS\n"
           "2. DESARROLLO PROYECTOS ABP\n"
           "3. EVENTO ABP\n\n"
-          "Responde únicamente con la opción más adecuada: 'ADMINISTRADOR INTELIGENTE DE COLEGIOS', "
-          "'DESARROLLO PROYECTOS ABP' o 'EVENTO ABP'.\n"
-          "Mi mensaje: \"$message\""
+          "Si el usuario menciona explícitamente una de estas opciones, responde ÚNICAMENTE con la frase exacta correspondiente. Confirma 'Quieres que te envié a...?' por ejemplo a la página de eventos "
+          "Por ejemplo, responde 'ADMINISTRADOR INTELIGENTE DE COLEGIOS' si el usuario menciona 'Administrador' o 'Colegios'.\n\n"
+          "Si el mensaje no está relacionado con ninguna opción (por ejemplo, el usuario dice 'Hola' o algo similar), "
+          "responde amablemente siguiendo el contexto de la conversación"
+    },
+    {
+      "role": "user",
+      "content": message
     }
   ]
 });
+
 
     debugPrint('Headers: $headers');
     debugPrint('Body: $body');
