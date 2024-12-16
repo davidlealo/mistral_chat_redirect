@@ -1,30 +1,33 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:mistral_chat_redirect/main.dart';
+import 'package:mistral_chat_redirect/screens/chat_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Chat screen initial state test', (WidgetTester tester) async {
+    // Construir la pantalla de chat.
+    await tester.pumpWidget(MaterialApp(home: ChatScreen()));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verificar que la pantalla no tiene mensajes al inicio.
+    expect(find.byType(TextField), findsOneWidget); // Verifica que hay un campo de texto.
+    expect(find.byType(ListView), findsOneWidget); // Verifica que hay una lista para los mensajes.
+    expect(find.text('Escribe tu mensaje...'), findsOneWidget); // Placeholder del campo de texto.
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('Sending a message adds it to the chat', (WidgetTester tester) async {
+    // Construir la pantalla de chat.
+    await tester.pumpWidget(MaterialApp(home: ChatScreen()));
+
+    // Encuentra el campo de texto e ingresa un mensaje.
+    final textField = find.byType(TextField);
+    final sendButton = find.byIcon(Icons.send);
+
+    await tester.enterText(textField, 'Hola, Mistral!');
+    await tester.tap(sendButton);
+
+    // Espera a que la pantalla se actualice.
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verifica que el mensaje ingresado ahora aparece en la pantalla.
+    expect(find.text('Hola, Mistral!'), findsOneWidget);
   });
 }

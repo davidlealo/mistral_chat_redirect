@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_dotenv: ^5.0.2 # Agregado para manejar variables de entorno
+  flutter_dotenv: ^5.0.2
+  http: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
